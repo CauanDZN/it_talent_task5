@@ -4,6 +4,8 @@ import cors from "cors";
 import { getAluno, getAlunos, createAluno } from './database.js';
 import dotenv from 'dotenv';
 
+dotenv.config();
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -60,5 +62,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(process.env.APP_PORT, () => {
-    console.log(`O servidor está executando na porta ${APP_PORT}`);
+    console.log(`O servidor está executando na porta ${process.env.APP_PORT}`);
 });
