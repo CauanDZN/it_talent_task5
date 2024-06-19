@@ -188,5 +188,5 @@ Para executar a extensão Thunder Client no VS Code, digite `Ctrl + Shift + P` e
 
 ## Imagens
 
-[Imagem 1](.github/image-1.png)
-[Imagem 2](.github/image-2.png)
+![Imagem 1](.github/image-1.png)
+![Imagem 2](.github/image-2.png)
