@@ -185,3 +185,8 @@ Faça uma requisição GET ao endpoint `/alunos` e verifique se seu nome está n
 ## Ferramentas de Requisição
 
 Para executar a extensão Thunder Client no VS Code, digite `Ctrl + Shift + P` e escreva “new request” sem as aspas. Escolha `Thunder Client: New Request`. Você pode escolher o verbo HTTP desejado. No projeto de backend, só há dois: `GET` e `POST`. O `POST` serve para criar recursos e o `GET` para obtê-los. Temos dois endpoints (URLs) relacionados a alunos: o `/alunos` e o `/aluno/id`, onde `id` é o id do aluno que queremos obter. Temos um endpoint com método `POST`. Para utilizá-lo, você deverá criar um conteúdo em JSON no corpo da requisição.
+
+## Imagens
+
+[Imagem 1](.github/image-1.png)
+[Imagem 2](.github/image-2.png)
