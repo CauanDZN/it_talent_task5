@@ -10,8 +10,8 @@ COPY . .
 
 COPY wait-for-it.sh /usr/src/app/
 
-ENV APP_PORT=8080
+ENV APP_PORT=5000
 
-EXPOSE 8080
+EXPOSE 5000
 
 CMD ["./wait-for-it.sh", "db:3306", "--", "node", "app.js"]
