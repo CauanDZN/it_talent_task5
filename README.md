@@ -1,192 +1,71 @@
-# Projeto de Conteinerização
+Para criar um README que explique o repositório contendo as pastas `frontend`, `backend` e `database`, além de descrever os serviços Docker Compose configurados, você pode seguir o exemplo abaixo:
 
-## Visão Geral
+---
 
-Bem-vindo ao projeto de conteinerização da CloudOps Solutions. Neste projeto, vamos dockerizar duas aplicações: um banco de dados MySQL e um backend em Node.js. Esse guia irá ajudá-lo a configurar, construir e executar as aplicações em contêineres Docker, além de verificar a integração entre elas.
+# Repositório do Projeto IT Talent
+
+Este repositório contém a aplicação IT Talent, que é dividida em três serviços principais: `frontend`, `backend` e `database`. Cada serviço está configurado em sua respectiva pasta no projeto.
 
 ## Estrutura do Projeto
 
-O projeto é composto por dois repositórios:
-
-1. **Banco de Dados**: Repositório do Banco de Dados
-2. **Backend**: Repositório do Backend
-
-Cada repositório contém o código e os arquivos necessários para configurar e executar cada aplicação em um contêiner Docker.
-
-## Pré-requisitos
-
-- Docker instalado em sua máquina
-- Docker Compose instalado (opcional, mas recomendado)
-- Acesso aos repositórios do Banco de Dados e Backend
-
-## Passos de Configuração
-
-### 1. Configuração do Banco de Dados
-
-#### Clone o Repositório do Banco de Dados
-
-```bash
-git clone <URL_DO_REPOSITORIO_DO_BANCO_DE_DADOS>
-cd <nome_do_diretorio_clonado>
+```
+/
+├── backend/       # Código fonte do backend da aplicação
+├── frontend/      # Código fonte do frontend da aplicação
+└── database/      # Configurações do banco de dados MySQL
 ```
 
-#### Criação do Dockerfile
+- **`backend/`**: Contém a lógica e os arquivos relacionados ao servidor backend da aplicação.
 
-Crie um arquivo `Dockerfile` com o seguinte conteúdo:
+- **`frontend/`**: Contém a interface do usuário (UI) da aplicação desenvolvida em React.
 
-```dockerfile
-FROM mysql:5.7
+- **`database/`**: Contém arquivos necessários para construir e configurar o banco de dados MySQL usado pela aplicação.
 
-ENV MYSQL_DATABASE=BANCO_DADOS_IT_TALENT
-ENV MYSQL_ROOT_PASSWORD=your_password
+## Configuração do Docker Compose
 
-COPY dump.sql /docker-entrypoint-initdb.d/
+O Docker Compose é utilizado para facilitar a execução dos serviços da aplicação em ambiente de desenvolvimento. Os serviços são configurados da seguinte forma:
 
-EXPOSE 3306
-```
+### Serviços
 
-#### Build da Imagem
+- **`frontend`**:
+  - **Porta**: 3000 (exposta localmente como 3000)
+  - **Descrição**: Serviço responsável por servir o frontend da aplicação React.
 
-Construa a imagem Docker:
+- **`backend`**:
+  - **Porta**: 5000 (exposta localmente como 5000)
+  - **Variáveis de Ambiente**:
+    - `APP_PORT`: Porta onde o servidor backend está rodando (5000)
+    - `MYSQL_IP`: Endereço IP do serviço de banco de dados (`db`)
+    - `MYSQL_PORT`: Porta do MySQL (3306)
+    - `MYSQL_USER`: Usuário do MySQL (`root`)
+    - `MYSQL_ROOT_PASSWORD`: Senha do usuário root do MySQL
+    - `MYSQL_DATABASE`: Nome do banco de dados utilizado pela aplicação (`BANCO_DADOS_IT_TALENT`)
+  - **Dependências**: Dependente do serviço `db` para funcionar corretamente.
 
-```bash
-docker build -t desafio_it_talent_junho_01 .
-```
+- **`db`**:
+  - **Porta**: 3306 (exposta localmente como 3306)
+  - **Variáveis de Ambiente**:
+    - `MYSQL_ROOT_PASSWORD`: Senha do usuário root do MySQL
+    - `MYSQL_DATABASE`: Nome do banco de dados utilizado pela aplicação (`BANCO_DADOS_IT_TALENT`)
+  - **Volumes**: Volume Docker para persistência dos dados do MySQL.
 
-#### Criação de uma Rede Docker
+### Como Usar
 
-Crie uma rede Docker personalizada:
+1. **Pré-requisitos**:
+   - Docker instalado no ambiente local.
 
-```bash
-docker network create desafio_network
-```
-
-#### Inicialização do Contêiner de Banco de Dados
-
-Inicie o contêiner do banco de dados:
-
-```bash
-docker run --name desafio_it_talent_junho_01 -d --network desafio_network desafio_it_talent_junho_01
-```
-
-#### Verificação da Instância do Banco de Dados
-
-Conecte-se ao contêiner do MySQL para verificar se o banco de dados foi populado corretamente:
-
-```bash
-docker exec -it desafio_it_talent_junho_01 mysql -u root -p
-```
-
-No prompt do MySQL, execute os seguintes comandos:
-
-```sql
-USE BANCO_DADOS_IT_TALENT;
-SHOW TABLES;
-SELECT * FROM ALUNOS;
-```
-
-### 2. Configuração do Backend
-
-#### Clone o Repositório do Backend
-
-```bash
-git clone <URL_DO_REPOSITORIO_DO_BACKEND>
-cd <nome_do_diretorio_clonado>
-```
-
-#### Atualize o Arquivo `.env`
-
-Atualize o arquivo `.env` no projeto de Backend para usar o nome do contêiner do banco de dados como o host MySQL:
-
-```env
-MYSQL_HOST=desafio_it_talent_junho_01
-MYSQL_USER=root
-MYSQL_PASSWORD=your_password
-MYSQL_DATABASE=BANCO_DADOS_IT_TALENT
-```
-
-#### Criação do Dockerfile
-
-Crie um arquivo `Dockerfile` com o seguinte conteúdo:
-
-```dockerfile
-FROM node:16
-
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
-COPY . .
-
-EXPOSE 8080
-
-CMD ["node", "app.js"]
-```
-
-#### Build da Imagem
-
-Construa a imagem Docker para o backend:
-
-```bash
-docker build -t backend_it_talent_junho_01 .
-```
-
-#### Inicialização do Contêiner de Backend
-
-Inicie o contêiner de backend:
-
-```bash
-docker run --name backend_it_talent_junho_01 -d -p 8080:8080 --network desafio_network backend_it_talent_junho_01
-```
-
-### Verificação e Testes
-
-#### Inserção de um Novo Registro
-
-Use o Thunder Client, Insomnia, Postman ou Curl para fazer uma requisição POST ao endpoint `/alunos`:
-
-```json
-{
-  "name": "Seu Nome"
-}
-```
-
-#### Obtenção dos Dados
-
-Faça uma requisição GET ao endpoint `/alunos` e verifique se seu nome está na lista.
-
-## Pontuação
-
-### Banco de Dados
-
-1. Clone do Projeto do Banco de Dados (0,5 pontos)
-2. Criação do Dockerfile (1,5 pontos)
-3. Commit com a criação do Dockerfile para o seu repositório clonado (1,0 ponto)
-
-### Backend
-
-1. Clone do Projeto de Backend (0,5 pontos)
-2. Criação do Dockerfile (1,5 pontos)
-3. Criação de mais um registro na tabela alunos, com o seu nome e tirar print (2,0 pontos)
-4. Commit com criação do Dockerfile e print de uma requisição ao endpoint `/alunos` com o GET, mostrando o seu nome na resposta da API (3,0 pontos)
-
-## Dicas
-
-1. Busque deixar tudo funcionando primeiro, depois tire o print e suba as alterações em commits nos respectivos repositórios.
-2. Não junte os dois projetos (Banco e Backend) em um único repositório. Separe um repositório para cada projeto.
-3. Para fazer as requisições você pode usar qualquer ferramenta. Algumas sugestões são:
-   - Thunder Client (extensão VS CODE)
-   - Insomnia
-   - Postman
-   - Curl
-
-## Ferramentas de Requisição
-
-Para executar a extensão Thunder Client no VS Code, digite `Ctrl + Shift + P` e escreva “new request” sem as aspas. Escolha `Thunder Client: New Request`. Você pode escolher o verbo HTTP desejado. No projeto de backend, só há dois: `GET` e `POST`. O `POST` serve para criar recursos e o `GET` para obtê-los. Temos dois endpoints (URLs) relacionados a alunos: o `/alunos` e o `/aluno/id`, onde `id` é o id do aluno que queremos obter. Temos um endpoint com método `POST`. Para utilizá-lo, você deverá criar um conteúdo em JSON no corpo da requisição.
+2. **Instruções**:
+   - Clone este repositório: `git clone https://github.com/seu-usuario/it-talent`
+   - Navegue até o diretório do projeto: `cd it-talent`
+   - Execute os serviços utilizando Docker Compose:
+     ```
+     docker-compose up -d --build
+     ```
+   - Acesse a aplicação frontend em `http://localhost:3000`.
 
 ## Imagens
 
 ![Imagem 1](.github/image-1.png)
 ![Imagem 2](.github/image-2.png)
+![Imagem 3](.github/image-3.png)
+![Imagem 4](.github/image-4.png)
